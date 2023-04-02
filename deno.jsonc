@@ -1,0 +1,9 @@
+{
+  "version": "0.0.0",
+  "tasks": {
+    "dev": "deno run -A --watch src/cli.ts",
+    "test": "deno test -A",
+    "test:dev": "deno test -A --watch",
+    "preview": "deno run -A src/cli.ts"
+  }
+}
