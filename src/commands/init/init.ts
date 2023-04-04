@@ -28,7 +28,9 @@ async function init() {
 
   const { name, type = "" } = program;
 
-  if (!types.includes(type)) {
+  const notValidType = !types.includes(type);
+
+  if (notValidType) {
     return logger.error("[type is not it types]", {
       types,
     });
@@ -38,18 +40,17 @@ async function init() {
   const isDeno = usesDeno.includes(type);
 
   const npmMessage = `
-    cd ${name}
-    npm run dev
+    Project '${name.toUpperCase()}' created.
+
+    # Change directory to project root and run in development mode
+    cd ${name} && npm run dev
   `;
 
   const denoMessage = `
     Project '${name.toUpperCase()}' created.
 
-    # Change directory to project root
-    cd ${name}
-
-    # Run in development mode
-    deno task dev
+    # Change directory to project root and run in development mode
+    cd ${name} && deno task dev
   `;
 
   logger.info(`Init project '${name}' of type '${type?.toUpperCase()}...'`);
