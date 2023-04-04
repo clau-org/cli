@@ -1,0 +1,13 @@
+{
+  "name": "CLI",
+  "description": "CLI for helping in multiple task for Clau development",
+  "version": "0.0.2",
+  "tasks": {
+    "dev": "deno run -A --watch src/cli.ts",
+    "test": "deno test -A",
+    "test:dev": "deno test -A --watch",
+    "preview": "deno run -A src/cli.ts",
+    "install": "deno install -A -n clau src/cli.ts",
+    "uninstall": "deno uninstall clau"
+  }
+}
