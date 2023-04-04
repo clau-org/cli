@@ -81,7 +81,7 @@ async function init() {
   // Run tests
   if (isNpm) await $`npm run test`;
 
-  if (isDeno) await $`deno task test`;
+  if (isDeno) await $`deno task test ${name}`;
 
   // Out of dir
   await $`cd ..`;
