@@ -68,7 +68,7 @@ async function init() {
   });
 
   // Move to dir
-  await $`cd ${name}/ `;
+  await $`cd ${name} `;
 
   // Install dependencies
   if (isNpm) await $`npm i --force `;
@@ -76,7 +76,7 @@ async function init() {
   // Format
   if (isNpm) await $`npm run format `;
 
-  if (isDeno) await $`deno fmt`;
+  if (isDeno) await $`deno fmt ${name}`;
 
   // Run tests
   if (isNpm) await $`npm run test`;
