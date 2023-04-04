@@ -1,6 +1,9 @@
 import { Denomander, logger } from "../deps.ts";
 import { addCommands } from "./utils/cli.ts";
-import { command as init, options as initOptions } from "./commands/init.ts";
+import {
+  command as init,
+  options as initOptions,
+} from "./commands/init/init.ts";
 
 let program = new Denomander({
   app_name: "Clau CLI",

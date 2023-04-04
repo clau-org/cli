@@ -8,4 +8,4 @@ import { Command } from "https://deno.land/x/denomander@0.9.3/docs.ts";
 
 const logger = new Logger({ prefix: "CLI" });
 
-export { $, Denomander, Logger, logger, Option, Command };
+export { $, Command, Denomander, Logger, logger, Option };

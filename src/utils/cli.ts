@@ -1,4 +1,4 @@
-import { Denomander, Option, Command, logger } from "../../deps.ts";
+import { Command, Denomander, Option } from "../../deps.ts";
 
 export function addCommand({
   command,
