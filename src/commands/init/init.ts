@@ -68,23 +68,20 @@ async function init() {
   });
 
   // Move to dir
-  await $`cd ${name} `;
+  Deno.chdir(name);
 
   // Install dependencies
-  if (isNpm) await $`npm i --force `;
+  if (isNpm) await $`npm i --force`;
 
   // Format
-  if (isNpm) await $`npm run format `;
+  if (isNpm) await $`npm run format`;
 
-  if (isDeno) await $`deno fmt ${name}`;
+  if (isDeno) await $`deno fmt`;
 
   // Run tests
   if (isNpm) await $`npm run test`;
 
-  if (isDeno) await $`deno task test ${name}`;
-
-  // Out of dir
-  await $`cd ..`;
+  if (isDeno) await $`deno task test`;
 
   logger.info(`Completed.`);
 
