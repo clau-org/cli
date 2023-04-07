@@ -1,27 +1,29 @@
-import { $, Command, logger, Option } from "../../../../deps.ts";
+import { $, logger } from "../../../../deps.ts";
+
+const validationCode = new Map(
+  Object.entries({
+    string: "z.string().nullish()",
+    "string-required": "z.string()",
+
+    email: "z.string().email().nullish()",
+    "email-required": "z.string().email()",
+
+    boolean: "z.boolean().nullish()",
+    "boolean-required": "z.boolean()",
+
+    datetime: "z.date().nullish()",
+    "datetime-required": "z.date()",
+
+    relation: "z.string().min(12).nullish()",
+    "relation-required": "z.string().min(12)",
+
+    uuid: "z.string().uuid().nullish()",
+    "uuid-required": "z.string().uuid()",
+  }),
+);
 
 function getValidationCode({ props }: { props: any[] }) {
   let propsCode = "";
-
-  const validationsPerType = new Map();
-
-  validationsPerType.set("string", "z.string().nullish()");
-  validationsPerType.set("string-required", "z.string()");
-
-  validationsPerType.set("email", "z.string().email().nullish()");
-  validationsPerType.set("email-required", "z.string().email()");
-
-  validationsPerType.set("boolean", "z.boolean().nullish()");
-  validationsPerType.set("boolean-required", "z.boolean()");
-
-  validationsPerType.set("datetime", "z.date().nullish()");
-  validationsPerType.set("datetime-required", "z.date()");
-
-  validationsPerType.set("relation", "z.string().min(12).nullish()");
-  validationsPerType.set("relation-required", "z.string().min(12)");
-
-  validationsPerType.set("uuid", "z.string().uuid().nullish()");
-  validationsPerType.set("uuid-required", "z.string().uuid()");
 
   for (const propConfig of props) {
     const { name, validation: configValidation, type, required } = propConfig;
@@ -31,7 +33,7 @@ function getValidationCode({ props }: { props: any[] }) {
     const typeKey = `${type}${required ? "-required" : ""}`;
 
     // Set validation
-    const validation = configValidation ?? validationsPerType.get(typeKey);
+    const validation = configValidation ?? validationCode.get(typeKey);
 
     // Set prop name
     const propName = isRelation ? `${name}_id` : name;
@@ -71,10 +73,6 @@ function replaceUserWithName({
 }
 
 async function action(options: any) {
-  logger.info("router-crud");
-
-  const propTypes = ["uuid", "string", "number", "email", "id"];
-
   const { name, apiDir, props } = options;
 
   // Setup working dir
@@ -107,8 +105,6 @@ async function action(options: any) {
   // Copy file
   await Deno.copyFile(routerPath, newRouterPath);
 
-  // TODO: Clean up
-
   // Remove .clau folder
   await $`rm -rf ${claDirPath}`;
 
@@ -117,6 +113,17 @@ async function action(options: any) {
 
   // Format code
   await $`deno fmt`;
+
+  const message = `
+    Router '${name.toUpperCase()}' created.
+
+    # 1. Add missing dependencies if needed
+    # 2. Add router to API if needed
+
+    cd ${apiDir} && deno task dev
+  `;
+
+  logger.info(message);
 }
 
 export { action };

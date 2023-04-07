@@ -1,13 +1,53 @@
-import { $, Command, logger, Option } from "../../../deps.ts";
+import { Command, logger, Option } from "../../../deps.ts";
 import { program } from "../../cli.ts";
-import { replaceInFiles } from "../init/replace.ts";
 import { action as routerCrudAction } from "./router/crud.ts";
 
+export type SubcommandOptions = {
+  value: string;
+  types: {
+    value: string;
+    action: Function;
+  }[];
+};
+
+export class Subcommand {
+  value: string;
+  types: {
+    value: string;
+    action: Function;
+  }[];
+
+  constructor({ value, types }: SubcommandOptions) {
+    this.value = value;
+    this.types = types;
+  }
+}
+
 const command = new Command({
-  value: "add [type]",
+  value: "add [subcommand]",
   description: "Command to scaffold a project",
   action: add,
 });
+
+const isValidSubcommand = ({
+  subcommands,
+  subcommandId,
+}: {
+  subcommands: Subcommand[];
+  subcommandId: string;
+}) => {
+  return subcommands.some((subcommand) => subcommand.value === subcommandId);
+};
+
+const isValidType = ({
+  types,
+  typeId,
+}: {
+  types: { value: string; action: Function }[];
+  typeId: string;
+}) => {
+  return types.some((t) => t.value == typeId);
+};
 
 const options: Option[] = [
   new Option({
@@ -17,76 +57,55 @@ const options: Option[] = [
   }),
 ];
 
+const subcommands = [
+  new Subcommand({
+    value: "router",
+    types: [
+      {
+        value: "crud",
+        action: routerCrudAction,
+      },
+    ],
+  }),
+];
+
 async function add() {
-  /**
-   * clau add router --config clau.json
-   * clau add page --config clau.json
-   */
-  const types = [
-    {
-      type: "router",
-      configTypes: [
-        {
-          value: "crud",
-          action: routerCrudAction,
-        },
-      ],
-    },
-  ];
+  const { subcommand: subcommandId, config: configFilePath } = program;
 
-  const isValidType = (type: string) => {
-    return types.some((t) => t.type === type);
-  };
-
-  const isValidConfigType = ({
-    configTypes,
-    configType,
-  }: {
-    configTypes: { value: string; action: Function }[];
-    configType: string;
-  }) => {
-    return configTypes.some((c) => c.value == configType);
-  };
-
-  const { type: typeId, config: configFilePath } = program;
-
-  const notValidType = !isValidType(typeId);
-
-  if (notValidType) {
-    return logger.error("[type is not it types]", {
-      types,
-    });
-  }
-
-  const currentType = types.find((t) => t.type == typeId);
-
-  let fileConfig: any = null;
-  try {
-    const jsonString = await Deno.readTextFile(configFilePath);
-    fileConfig = JSON.parse(jsonString);
-  } catch (error) {
-    logger.error(`Failed to read config file: ${error}`);
-    return;
-  }
-
-  const { type: configType } = fileConfig;
-
-  const notValidRouterConfigType = !isValidConfigType({
-    configTypes: currentType!.configTypes,
-    configType,
+  const notValidSubcommand = !isValidSubcommand({
+    subcommandId,
+    subcommands,
   });
 
-  if (notValidRouterConfigType) {
-    return logger.error("[config error: type is not it types]", {
-      types: currentType!.configTypes.map((ct) => ct.value),
+  if (notValidSubcommand) {
+    return logger.error("[subcommand is not it subcommands]", {
+      subcommands: subcommands.map((s) => s.value),
     });
   }
 
-  const currentConfigType = currentType!.configTypes.find(
-    (ct) => ct.value == configType,
-  );
+  const currentSubcommand = subcommands.find((s) => s.value == subcommandId);
 
-  await currentConfigType!.action(fileConfig);
+  // Read config file
+  const config = JSON.parse(await Deno.readTextFile(configFilePath));
+
+  // Read type
+  const { type: typeId } = config;
+
+  const notValidType = !isValidType({
+    types: currentSubcommand!.types,
+    typeId,
+  });
+
+  if (notValidType) {
+    return logger.error("[config error: type is not it types]", {
+      types: currentSubcommand!.types.map((t) => t.value),
+    });
+  }
+
+  const currentType = currentSubcommand!.types.find((t) => t.value == typeId);
+
+  // Execute type action
+  await currentType!.action(config);
 }
 
 export { command, options };
