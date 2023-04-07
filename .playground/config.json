@@ -1,0 +1,37 @@
+{
+  "name": "note",
+  "type": "crud",
+  "apiDir": ".playground/users",
+  "props": [
+    {
+      "name": "nickname",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "email",
+      "type": "email",
+      "required": true
+    },
+    {
+      "name": "phone",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "birthDate",
+      "type": "datetime",
+      "required": false
+    },
+    {
+      "name": "image",
+      "type": "relation",
+      "required": false
+    }
+  ]
+}

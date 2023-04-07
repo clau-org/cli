@@ -1,0 +1,22 @@
+{
+  "name": "platform",
+  "type": "crud",
+  "apiDir": ".playground/users",
+  "props": [
+    {
+      "name": "key",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "image",
+      "type": "relation",
+      "required": false
+    }
+  ]
+}
