@@ -5,6 +5,7 @@ import {
   command as init,
   options as initOptions,
 } from "./commands/init/init.ts";
+import { command as add, options as addOptions } from "./commands/add/add.ts";
 
 const { name, version, description } = denojson.default;
 
@@ -18,6 +19,10 @@ const commands = [
   {
     command: init,
     options: initOptions,
+  },
+  {
+    command: add,
+    options: addOptions,
   },
 ];
 
