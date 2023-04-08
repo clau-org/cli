@@ -56,7 +56,10 @@ async function init() {
   logger.info(`Init project '${name}' of type '${type?.toUpperCase()}...'`);
 
   // Clone template create dir
-  await $`git clone git@github.com:clau-org/template-${type}.git ${name}`;
+  await $`git clone git@github.com:clau-org/template.git ${name}/.clau`;
+
+  // Copy files
+  await $`cp -rf ${name}/.clau/${type} ${name}`;
 
   // Remove .git folder
   await $`rm -rf ${name}/.git`;
